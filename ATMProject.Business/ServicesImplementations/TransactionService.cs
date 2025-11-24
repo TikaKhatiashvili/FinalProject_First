@@ -40,7 +40,7 @@ public class TransactionService : ITransactionService
         {
             Date = DateTime.Now,
             UserFullName = $"{user.FirstName} {user.LastName}",
-            Action = $"შეავსო ბალანსი {amount} ლარით",
+            Action = $"Deposited  {amount} GEL",
             Amount = amount,
             BalanceAfter = user.Balance
         });
@@ -58,7 +58,7 @@ public class TransactionService : ITransactionService
         {
             Date = DateTime.Now,
             UserFullName = $"{user.FirstName} {user.LastName}",
-            Action = $"Cashed {amount} Gel",
+            Action = $"Withdrew  {amount} Gel",
             Amount = amount,
             BalanceAfter = user.Balance
         });
