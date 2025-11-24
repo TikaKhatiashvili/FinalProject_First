@@ -22,7 +22,7 @@ public class TransactionService : ITransactionService
         {
             Date = DateTime.Now,
             UserFullName = $"{user.FirstName} {user.LastName}",
-            Action = "შეამოწმა ბალანსი",
+            Action = "Check the balance.",
             BalanceAfter = balance
         });
 
@@ -31,7 +31,7 @@ public class TransactionService : ITransactionService
 
     public async Task DepositAsync(User user, decimal amount)
     {
-        if (amount <= 0) throw new ArgumentException("თანხა უნდა იყოს დადებითი.");
+        if (amount <= 0) throw new ArgumentException("The amount must be positive.");
 
         user.Balance += amount;
         await _userRepo.UpdateAsync(user);
@@ -48,8 +48,8 @@ public class TransactionService : ITransactionService
 
     public async Task WithdrawAsync(User user, decimal amount)
     {
-        if (amount <= 0) throw new ArgumentException("თანხა უნდა იყოს დადებითი.");
-        if (user.Balance < amount) throw new InvalidOperationException("ბალანსი არასაკმარისია.");
+        if (amount <= 0) throw new ArgumentException("The amount must be positive..");
+        if (user.Balance < amount) throw new InvalidOperationException("The balance is insufficient.");
 
         user.Balance -= amount;
         await _userRepo.UpdateAsync(user);
@@ -58,7 +58,7 @@ public class TransactionService : ITransactionService
         {
             Date = DateTime.Now,
             UserFullName = $"{user.FirstName} {user.LastName}",
-            Action = $"გაანაღდა {amount} ლარით",
+            Action = $"Cashed {amount} Gel",
             Amount = amount,
             BalanceAfter = user.Balance
         });
