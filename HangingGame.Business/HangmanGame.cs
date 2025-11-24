@@ -1,30 +1,48 @@
-﻿namespace HangingGame.Business
+﻿namespace HangingGame.Business;
+public class HangmanGame : IGameLogic
 {
-    public class HangmanGame : IGameLogic
+    private readonly string word;
+    private readonly char[] hiddenWord;
+    private int attempts = 6;
+
+    public int Score { get; private set; } = 0;
+
+    public HangmanGame(string word)
     {
-        private readonly string word;
-        private char[] hiddenWord;
-        private int trying;
+        this.word = word.ToLower();
+        hiddenWord = new string('_', word.Length).ToCharArray();
+    }
 
-        public HangmanGame(string word)
+    public void PlayLetterGuessing()
+    {
+        try
         {
-            this.word = word.ToLower();
-            this.hiddenWord = new string('_', word.Length).ToCharArray();
-            this.trying = 6;
-        }
-
-        public void PlayLetterGuessing()
-        {
-            while (trying > 0 && hiddenWord.Contains('_'))
+            while (attempts > 0 && hiddenWord.Contains('_'))
             {
-                Console.WriteLine($"Word: {new string(hiddenWord)}");
-                Console.WriteLine($"You have {trying} attempts left. Enter a letter:");
-                string input = Console.ReadLine().ToLower();
+                Console.WriteLine($"\nWord: {new string(hiddenWord)}");
+                Console.WriteLine($"Attempts left: {attempts}. Enter a letter OR full word:");
 
-                if (string.IsNullOrWhiteSpace(input) || input.Length != 1)
+                string? input = Console.ReadLine()?.ToLower();
+
+                if (string.IsNullOrWhiteSpace(input))
                 {
-                    Console.WriteLine("Enter only one letter.");
+                    Console.WriteLine("Enter something.");
                     continue;
+                }
+
+                if (input.Length > 1)
+                {
+                    if (input == word)
+                    {
+                        Console.WriteLine($"\nCorrect! You WIN! The word was: {word}");
+                        Score += 100;
+                        return;
+                    }
+                    else
+                    {
+                        Console.WriteLine($"\nWrong full word! You lost! The word was: {word}");
+                        return;
+                    }
                 }
 
                 char guess = input[0];
@@ -36,40 +54,30 @@
                         if (word[i] == guess)
                             hiddenWord[i] = guess;
                     }
+
                     Console.WriteLine($"Correct! Letter '{guess}' revealed.");
+                    Score += 10;
+
+                    if (!hiddenWord.Contains('_'))
+                    {
+                        Console.WriteLine($"\nYou revealed the word: {word}");
+                        Score += 50;
+                        return;
+                    }
                 }
                 else
                 {
-                    trying--;
+                    attempts--;
                     Console.WriteLine($"Wrong guess! Letter '{guess}' is not in the word.");
                 }
-
-                if (!hiddenWord.Contains('_'))
-                {
-                    Console.WriteLine($"Congratulations! You revealed the word: {word}");
-                    return;
-                }
             }
 
-            if (trying == 0)
-            {
-                Console.WriteLine($"You ran out of attempts. The word was: {word}");
-            }
+            if (attempts == 0)
+                Console.WriteLine($"\nYou lost! The word was: {word}");
         }
-
-        public void PlayFullWordGuessing()
+        catch (Exception ex)
         {
-            Console.WriteLine("Try to guess the full word:");
-            string input = Console.ReadLine().ToLower();
-
-            if (input == word)
-            {
-                Console.WriteLine("Congratulations! You guessed the word!");
-            }
-            else
-            {
-                Console.WriteLine($"Wrong! The correct word was: {word}");
-            }
+            Console.WriteLine($"\n Error occurred: {ex.Message}");
         }
     }
 }

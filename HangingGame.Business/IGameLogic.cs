@@ -3,5 +3,4 @@
 public interface IGameLogic
 {
     void PlayLetterGuessing();
-    void PlayFullWordGuessing();
 }

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HangingGame.Business
+﻿namespace HangingGame.Business
 {
     public class WordProvider : IWordProvider
     {
@@ -13,12 +7,11 @@ namespace HangingGame.Business
         "monkey", "bear", "hippopotamus", "panda", "koala "
     };
 
-        private Random random = new Random();
+        private readonly Random random = new Random();
 
         public string GetRandomWord()
         {
-            int index = random.Next(words.Count);
-            return words[index];
+            return words[random.Next(words.Count)];
         }
     }
 

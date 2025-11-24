@@ -1,24 +1,42 @@
 ﻿using HangingGame.Business;
+using HangingGame.Data;
+using HangingGame.Models;
 namespace HangingGame.Presentation;
 
  class Program
 {
-    static void Main()
+    static async Task Main()
     {
-        IWordProvider wordProvider = new WordProvider();
-        string word = wordProvider.GetRandomWord();
+        Console.Write("Enter your name: ");
+        string name = Console.ReadLine()!;
+
+        XMLScoreService xml = new XMLScoreService("Data/Players.xml");
+
+        IWordProvider provider = new WordProvider();
+        string word = provider.GetRandomWord();
 
         IGameLogic game = new HangmanGame(word);
 
-        Console.WriteLine("Welcome to the Hangman Game!");
-        Console.WriteLine("You have 6 attempts to guess letters.");
+        Console.WriteLine("Welcome to Hangman!");
 
         game.PlayLetterGuessing();
 
-        Console.WriteLine();
-        Console.WriteLine("Now try to guess the full word!");
-        game.PlayFullWordGuessing();
+        var record = new PlayerRecord
+        {
+            Id = Guid.NewGuid(),
+            PlayerName = name,
+            HighScore = ((HangmanGame)game).Score,
+            LastPlayed = DateTime.UtcNow,
+            GamesPlayed = 1
+        };
 
-        Console.WriteLine("Game over!");
+        await xml.AddOrUpdateAsync(record);
+
+      
+        Console.WriteLine("\n   TOP 10 PLAYERS  ");
+        var top = await xml.GetAllAsync();
+
+        foreach (var p in top)
+            Console.WriteLine($"{p.PlayerName} - HighScore: {p.HighScore} - Games: {p.GamesPlayed}");
     }
 }
